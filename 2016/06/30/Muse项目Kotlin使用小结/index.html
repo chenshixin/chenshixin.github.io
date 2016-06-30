@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="七章" />
+
+
+
+<meta name="description" content="总结Muse项目中使用Kotlin带来的便利">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Muse项目Kotlin使用小结">
+<meta property="og:url" content="http://www.chenshixin.com/2016/06/30/Muse项目Kotlin使用小结/index.html">
+<meta property="og:site_name" content="七章的博客">
+<meta property="og:description" content="总结Muse项目中使用Kotlin带来的便利">
+<meta property="og:image" content="http://7xored.com1.z0.glb.clouddn.com/blog_kotlin_plguin.png?imageView2/2/w/600/q/100">
+<meta property="og:image" content="http://7xored.com1.z0.glb.clouddn.com/blog_kotlin_configure.png?imageView2/2/w/600/q/100">
+<meta property="og:image" content="http://7xored.com1.z0.glb.clouddn.com/blog_kotlin_ext.png">
+<meta property="og:updated_time" content="2016-06-30T08:22:12.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Muse项目Kotlin使用小结">
+<meta name="twitter:description" content="总结Muse项目中使用Kotlin带来的便利">
+<meta name="twitter:image" content="http://7xored.com1.z0.glb.clouddn.com/blog_kotlin_plguin.png?imageView2/2/w/600/q/100">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="七章的博客" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/avatar.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>Muse项目Kotlin使用小结 | 七章的博客</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">七章</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">Android、iOS、JavaWeb、前端</p>
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="true" />
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:chenshixin1991@gmail.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" href="https://github.com/chenshixin" title="GitHub"></a>
+                            
+                                <a class="fa RSS" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flex/">Flex</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kotlin/">Kotlin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReactNative/">ReactNative</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存泄露/">内存泄露</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/开发工具/">开发工具</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://taoyuanxiaoqi.com/">桃园小七</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://pages.github.com/">GitHub</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://moxfive.xyz/">MOxFIVE</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">七章</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">七章</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">Android、iOS、JavaWeb、前端</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:chenshixin1991@gmail.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/chenshixin" title="GitHub"></a>
+                            
+                                <a class="fa RSS" target="_blank" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-Muse项目Kotlin使用小结" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/06/30/Muse项目Kotlin使用小结/" class="article-date">
+      <time datetime="2016-06-30T03:02:44.000Z" itemprop="datePublished">2016-06-30</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Muse项目Kotlin使用小结
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kotlin/">Kotlin</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h1 id="起源"><a href="#起源" class="headerlink" title="起源"></a>起源</h1><p>4月中旬来到新公司，遇到新项目Muse的启动，由于没有历史包袱，技术用的比较激进，除了部分公用库之外，整个项目都基于Kotlin完成。历时1个半月，项目成功上线，整个过程中Kotlin带来了诸多便利，这里介绍下配置方法，并总结下用Kotlin替代Java带来的便利。供后续翻阅。</p>
+<blockquote>
+<p>注意：本文不是Kotlin教程，只是总结了一些Kotlin提供的便利</p>
+</blockquote>
+<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>由于Kotlin是JetBrains推出的，Android Studio对其的支持度很高。在普通Android项目的基础上增加Kotlin配置只需要在插件管理中安装Kotlin插件并执行<code>Tools - Kotlin -Configure Kotlin in Project</code>即可<br><img src="http://7xored.com1.z0.glb.clouddn.com/blog_kotlin_plguin.png?imageView2/2/w/600/q/100" alt="安装Kotlin插件"><br><img src="http://7xored.com1.z0.glb.clouddn.com/blog_kotlin_configure.png?imageView2/2/w/600/q/100" alt="配置Kotlin"></p>
+<h1 id="Kotlin的便利性"><a href="#Kotlin的便利性" class="headerlink" title="Kotlin的便利性"></a>Kotlin的便利性</h1><p>首先最大的便利是语句的结尾不用写分号。刚开始使用时觉得没啥，就是写一个分号的事情，但是用久了回头再写Java的时候，不写分号出现编译错误的时候才会怀念Kotlin。</p>
+<h2 id="扩展方法"><a href="#扩展方法" class="headerlink" title="扩展方法"></a>扩展方法</h2><p>之前项目过程中经常出现各类Utils类，比如StringUtils、DateUtils等，这种情况下刚入手项目的同事可能不清楚该方法的存在，导致同一功能的重复实现。<br>而在Kotlin中，可以为已有类拓展方法，结合IDE的代码提示功能，方便找到同事已定义的类拓展方法，避免代码冗余。<br>举个例子：在商城类项目中经常会出现需要显示金额“￥”的情况，并且金额的数字要保留指定位数，并且有四舍五入等规则。那么，在Java中，我们通常会定义一个Util类，然后里面会有一个format方法。而使用Kotlin，我们可以直接对Double、Float、Int等数值类型进行拓展，以Double为例，代码如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">fun Double.Yuan(): String&#123;</div><div class="line">    val formatter = DecimalFormat(&quot;0.00&quot;)</div><div class="line">    formatter.roundingMode = RoundingMode.DOWN</div><div class="line">    return &quot;￥&quot;+formatter.format(this)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>定义该方法后，输入Double类型变量以及“.”之后，IDE会提示此方法的存在。这样我们就不需要再去Utils类中翻查方法。<br><img src="http://7xored.com1.z0.glb.clouddn.com/blog_kotlin_ext.png" alt="拓展方法提示"></p>
+<h2 id="Null-Safety"><a href="#Null-Safety" class="headerlink" title="Null Safety"></a>Null Safety</h2><p>过去项目上线后，Crash中至少有一半是<code>NullPointerException</code>，相信大部分Andorid或者Java程序员对此都深恶痛绝。Kotlin从源头上就避免这种情况的发生，它将可用为空的引用和不可为空的引用进行区分，我们不能将<code>null</code>赋值给一个不能为空的引用，而可为空的引用在使用时必须手动对其进行显示的判断或者使用<code>?.</code>的方式进行安全的调用。<br>通过这种方式，Crash率大幅降低，目前Crash中几乎没有出现过空指针的异常。</p>
+<h2 id="Anko"><a href="#Anko" class="headerlink" title="Anko"></a>Anko</h2><p>Android的UI通常是使用xml文件进行布局，虽然可以使用Java代码进行创建，但是写起来较为复杂，Kotlin的拓展库Anko提供了一种极为方便的方式供我们使用Kotlin代码进行界面的构建。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">verticalLayout &#123;</div><div class="line">    padding = dip(30)</div><div class="line">    editText &#123;</div><div class="line">        hint = &quot;Name&quot;</div><div class="line">        textSize = 24f</div><div class="line">    &#125;</div><div class="line">    editText &#123;</div><div class="line">        hint = &quot;Password&quot;</div><div class="line">        textSize = 24f</div><div class="line">    &#125;</div><div class="line">    button(&quot;Login&quot;) &#123;</div><div class="line">        textSize = 26f</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>例如上面的代码创建了带有30dp的横向的布局，内含两个EditText和一个Button组件。可以想象一下这样的简单界面使用Java代码构建的工作量。通过Anko，当需要简单的界面比如列表Adapter内的布局时，可以无需创建layout文件，提高效率。</p>
+<h2 id="常量"><a href="#常量" class="headerlink" title="常量"></a>常量</h2><p>Kotlin中的常量和Java中的final修饰的变量类似。在Kotlin中，推荐使用常量，仅当确定值会变化的情况下才使用变量，这样可以提高运行效率并避免在使用过程中引用在某个不起眼的角落被更改，从而出现奇怪的问题。</p>
+<h2 id="Lazy-init"><a href="#Lazy-init" class="headerlink" title="Lazy-init"></a>Lazy-init</h2><p>我们经常会遇到Activity或者Fragment中获取intent中传递过来的参数，通常做法是在类开头处进行声明，然后在onCreate等方法中进行。<br>但是这样带来的问题是当我们需要知道这个变量的来源时，我们需要翻到初始化的地方，不太方便。在Kotlin中通过懒加载的方式，可以很好的解决这个问题。如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">val mRoomId by lazy &#123; intent.getLongExtra(EXTRA_CHATROOM_ID, 0) &#125;</div></pre></td></tr></table></figure></p>
+<p>这样，在变量声明的地方，我们就能比较明显看到它的初始化方式。</p>
+<h2 id="Data类"><a href="#Data类" class="headerlink" title="Data类"></a>Data类</h2><p>每个客户端项目都会有一系列的称为Model或者Bean的类，用来表示我们的数据模型。通常我们需要为这些类添加Getter/Setter、equals/hashCode、toString等方法。虽然IDE可以帮助我们生成，但是这样的重复劳动确实不被讨喜。<br>在Kotlin中，我们可以使用<code>data</code>关键字来修饰某个类，就可以省下上述这些方法。<br>例如，声明一个User类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">data class User(val name: String, val age: Int)</div></pre></td></tr></table></figure></p>
+<h2 id="Lambdas"><a href="#Lambdas" class="headerlink" title="Lambdas"></a>Lambdas</h2><p>Lambda的使用已经出现在Java8中，但是由于Android当前仍然使用旧版本的Java运行环境，并不支持Lambda表达式，虽然有第三方的库可以提供帮助，但毕竟不是官方的方式。而Kotlin原生变支持lambda，给编程带来极大便利性。<br>还是使用常见的例子来说明，<code>View.setOnClickListener()</code>这个方法所有的Android程序员都使用过。通常，我们会这么写：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">view.setOnClickListener(new OnClickListener()&#123;</div><div class="line">    @Override</div><div class="line">    public void onClick(View v) &#123;</div><div class="line">            ...</div><div class="line">    &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>然后，翻译成Kotlin<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">view.setOnClickListener(object : OnClickListener &#123;</div><div class="line">    override fun onClick(v: View) &#123;</div><div class="line">    ...</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>嗯，基本没啥变化，仅仅是语言上的差异<br>然后我们使用Lambads的形式，箭头左边定义参数，右边是逻辑处理和返回值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">view.setOnClickListener(&#123; view -&gt; ...&#125;)</div></pre></td></tr></table></figure></p>
+<p>简化很多。继续，如果参数没有被使用到的话，就可以省略参数，于是变成这样：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">view.setOnClickListener(&#123; ...&#125;)</div></pre></td></tr></table></figure></p>
+<p>最后，如果方法中最后一个参数是一个函数，并且只有一个元素，可以再化简<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">view.setOnClickListener&#123; ...&#125;</div></pre></td></tr></table></figure></p>
+<p>嗯，5行代码的事情一行就能解决，打打提高了效率。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>Kotlin带来了一种回不去的感觉，再次用Java去写Android程序的时候会有怎么这么啰嗦的感觉。不过Kotlin目前才1.0.2，未来不知道是否会成为主流，在成熟的大项目中使用依然有风险，利弊需要团队自己来权衡。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2016/06/30/Muse项目Kotlin使用小结/">Muse项目Kotlin使用小结</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">七章</a></p>
+        <p><span>发布时间:</span>2016-06-30, 11:02:44</p>
+        <p><span>最后更新:</span>2016-06-30, 16:22:12</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2016/06/30/Muse项目Kotlin使用小结/" title="Muse项目Kotlin使用小结">http://www.chenshixin.com/2016/06/30/Muse项目Kotlin使用小结/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.chenshixin.com/2016/06/30/Muse项目Kotlin使用小结/　　作者: 七章" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2016/01/28/ReactNatvie笔记-Flex布局/">
+                    ReactNative笔记-Flex布局
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#起源"><span class="toc-number">1.</span> <span class="toc-text">起源</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置"><span class="toc-number">2.</span> <span class="toc-text">配置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Kotlin的便利性"><span class="toc-number">3.</span> <span class="toc-text">Kotlin的便利性</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#扩展方法"><span class="toc-number">3.1.</span> <span class="toc-text">扩展方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Null-Safety"><span class="toc-number">3.2.</span> <span class="toc-text">Null Safety</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Anko"><span class="toc-number">3.3.</span> <span class="toc-text">Anko</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常量"><span class="toc-number">3.4.</span> <span class="toc-text">常量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lazy-init"><span class="toc-number">3.5.</span> <span class="toc-text">Lazy-init</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Data类"><span class="toc-number">3.6.</span> <span class="toc-text">Data类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lambdas"><span class="toc-number">3.7.</span> <span class="toc-text">Lambdas</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+</div>
+<style>
+    .left-col .switch-btn,
+    .left-col .switch-area {
+        display: none;
+    }
+</style>
+
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script>
+    yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+</script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"Muse项目Kotlin使用小结　| 七章的博客　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2016/01/28/ReactNatvie笔记-Flex布局/" title="下一篇: ReactNative笔记-Flex布局">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/06/30/Muse项目Kotlin使用小结/">Muse项目Kotlin使用小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/01/28/ReactNatvie笔记-Flex布局/">ReactNative笔记-Flex布局</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/12/06/使用StrictMode和MAT分析Android内存泄露问题/">使用StrictMode和MAT分析Android内存泄露</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2015-2016 七章
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >本站到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>

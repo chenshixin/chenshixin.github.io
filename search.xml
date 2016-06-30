@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+    
+    <entry>
+      <title><![CDATA[Muse项目Kotlin使用小结]]></title>
+      <url>http://www.chenshixin.com/2016/06/30/Muse%E9%A1%B9%E7%9B%AEKotlin%E4%BD%BF%E7%94%A8%E5%B0%8F%E7%BB%93/</url>
+      <content type="html"><![CDATA[<h1 id="起源"><a href="#起源" class="headerlink" title="起源"></a>起源</h1><p>4月中旬来到新公司，遇到新项目Muse的启动，由于没有历史包袱，技术用的比较激进，除了部分公用库之外，整个项目都基于Kotlin完成。历时1个半月，项目成功上线，整个过程中Kotlin带来了诸多便利，这里介绍下配置方法，并总结下用Kotlin替代Java带来的便利。供后续翻阅。</p>
+<blockquote>
+<p>注意：本文不是Kotlin教程，只是总结了一些Kotlin提供的便利</p>
+</blockquote>
+<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>由于Kotlin是JetBrains推出的，Android Studio对其的支持度很高。在普通Android项目的基础上增加Kotlin配置只需要在插件管理中安装Kotlin插件并执行<code>Tools - Kotlin -Configure Kotlin in Project</code>即可<br><img src="http://7xored.com1.z0.glb.clouddn.com/blog_kotlin_plguin.png?imageView2/2/w/600/q/100" alt="安装Kotlin插件"><br><img src="http://7xored.com1.z0.glb.clouddn.com/blog_kotlin_configure.png?imageView2/2/w/600/q/100" alt="配置Kotlin"></p>
+<h1 id="Kotlin的便利性"><a href="#Kotlin的便利性" class="headerlink" title="Kotlin的便利性"></a>Kotlin的便利性</h1><p>首先最大的便利是语句的结尾不用写分号。刚开始使用时觉得没啥，就是写一个分号的事情，但是用久了回头再写Java的时候，不写分号出现编译错误的时候才会怀念Kotlin。</p>
+<h2 id="扩展方法"><a href="#扩展方法" class="headerlink" title="扩展方法"></a>扩展方法</h2><p>之前项目过程中经常出现各类Utils类，比如StringUtils、DateUtils等，这种情况下刚入手项目的同事可能不清楚该方法的存在，导致同一功能的重复实现。<br>而在Kotlin中，可以为已有类拓展方法，结合IDE的代码提示功能，方便找到同事已定义的类拓展方法，避免代码冗余。<br>举个例子：在商城类项目中经常会出现需要显示金额“￥”的情况，并且金额的数字要保留指定位数，并且有四舍五入等规则。那么，在Java中，我们通常会定义一个Util类，然后里面会有一个format方法。而使用Kotlin，我们可以直接对Double、Float、Int等数值类型进行拓展，以Double为例，代码如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">fun Double.Yuan(): String&#123;</div><div class="line">    val formatter = DecimalFormat(&quot;0.00&quot;)</div><div class="line">    formatter.roundingMode = RoundingMode.DOWN</div><div class="line">    return &quot;￥&quot;+formatter.format(this)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>定义该方法后，输入Double类型变量以及“.”之后，IDE会提示此方法的存在。这样我们就不需要再去Utils类中翻查方法。<br><img src="http://7xored.com1.z0.glb.clouddn.com/blog_kotlin_ext.png" alt="拓展方法提示"></p>
+<h2 id="Null-Safety"><a href="#Null-Safety" class="headerlink" title="Null Safety"></a>Null Safety</h2><p>过去项目上线后，Crash中至少有一半是<code>NullPointerException</code>，相信大部分Andorid或者Java程序员对此都深恶痛绝。Kotlin从源头上就避免这种情况的发生，它将可用为空的引用和不可为空的引用进行区分，我们不能将<code>null</code>赋值给一个不能为空的引用，而可为空的引用在使用时必须手动对其进行显示的判断或者使用<code>?.</code>的方式进行安全的调用。<br>通过这种方式，Crash率大幅降低，目前Crash中几乎没有出现过空指针的异常。</p>
+<h2 id="Anko"><a href="#Anko" class="headerlink" title="Anko"></a>Anko</h2><p>Android的UI通常是使用xml文件进行布局，虽然可以使用Java代码进行创建，但是写起来较为复杂，Kotlin的拓展库Anko提供了一种极为方便的方式供我们使用Kotlin代码进行界面的构建。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">verticalLayout &#123;</div><div class="line">    padding = dip(30)</div><div class="line">    editText &#123;</div><div class="line">        hint = &quot;Name&quot;</div><div class="line">        textSize = 24f</div><div class="line">    &#125;</div><div class="line">    editText &#123;</div><div class="line">        hint = &quot;Password&quot;</div><div class="line">        textSize = 24f</div><div class="line">    &#125;</div><div class="line">    button(&quot;Login&quot;) &#123;</div><div class="line">        textSize = 26f</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>例如上面的代码创建了带有30dp的横向的布局，内含两个EditText和一个Button组件。可以想象一下这样的简单界面使用Java代码构建的工作量。通过Anko，当需要简单的界面比如列表Adapter内的布局时，可以无需创建layout文件，提高效率。</p>
+<h2 id="常量"><a href="#常量" class="headerlink" title="常量"></a>常量</h2><p>Kotlin中的常量和Java中的final修饰的变量类似。在Kotlin中，推荐使用常量，仅当确定值会变化的情况下才使用变量，这样可以提高运行效率并避免在使用过程中引用在某个不起眼的角落被更改，从而出现奇怪的问题。</p>
+<h2 id="Lazy-init"><a href="#Lazy-init" class="headerlink" title="Lazy-init"></a>Lazy-init</h2><p>我们经常会遇到Activity或者Fragment中获取intent中传递过来的参数，通常做法是在类开头处进行声明，然后在onCreate等方法中进行。<br>但是这样带来的问题是当我们需要知道这个变量的来源时，我们需要翻到初始化的地方，不太方便。在Kotlin中通过懒加载的方式，可以很好的解决这个问题。如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">val mRoomId by lazy &#123; intent.getLongExtra(EXTRA_CHATROOM_ID, 0) &#125;</div></pre></td></tr></table></figure></p>
+<p>这样，在变量声明的地方，我们就能比较明显看到它的初始化方式。</p>
+<h2 id="Data类"><a href="#Data类" class="headerlink" title="Data类"></a>Data类</h2><p>每个客户端项目都会有一系列的称为Model或者Bean的类，用来表示我们的数据模型。通常我们需要为这些类添加Getter/Setter、equals/hashCode、toString等方法。虽然IDE可以帮助我们生成，但是这样的重复劳动确实不被讨喜。<br>在Kotlin中，我们可以使用<code>data</code>关键字来修饰某个类，就可以省下上述这些方法。<br>例如，声明一个User类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">data class User(val name: String, val age: Int)</div></pre></td></tr></table></figure></p>
+<h2 id="Lambdas"><a href="#Lambdas" class="headerlink" title="Lambdas"></a>Lambdas</h2><p>Lambda的使用已经出现在Java8中，但是由于Android当前仍然使用旧版本的Java运行环境，并不支持Lambda表达式，虽然有第三方的库可以提供帮助，但毕竟不是官方的方式。而Kotlin原生变支持lambda，给编程带来极大便利性。<br>还是使用常见的例子来说明，<code>View.setOnClickListener()</code>这个方法所有的Android程序员都使用过。通常，我们会这么写：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">view.setOnClickListener(new OnClickListener()&#123;</div><div class="line">    @Override</div><div class="line">    public void onClick(View v) &#123;</div><div class="line">            ...</div><div class="line">    &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>然后，翻译成Kotlin<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">view.setOnClickListener(object : OnClickListener &#123;</div><div class="line">    override fun onClick(v: View) &#123;</div><div class="line">    ...</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>嗯，基本没啥变化，仅仅是语言上的差异<br>然后我们使用Lambads的形式，箭头左边定义参数，右边是逻辑处理和返回值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">view.setOnClickListener(&#123; view -&gt; ...&#125;)</div></pre></td></tr></table></figure></p>
+<p>简化很多。继续，如果参数没有被使用到的话，就可以省略参数，于是变成这样：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">view.setOnClickListener(&#123; ...&#125;)</div></pre></td></tr></table></figure></p>
+<p>最后，如果方法中最后一个参数是一个函数，并且只有一个元素，可以再化简<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">view.setOnClickListener&#123; ...&#125;</div></pre></td></tr></table></figure></p>
+<p>嗯，5行代码的事情一行就能解决，打打提高了效率。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>Kotlin带来了一种回不去的感觉，再次用Java去写Android程序的时候会有怎么这么啰嗦的感觉。不过Kotlin目前才1.0.2，未来不知道是否会成为主流，在成熟的大项目中使用依然有风险，利弊需要团队自己来权衡。</p>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[ReactNative笔记-Flex布局]]></title>
+      <url>http://www.chenshixin.com/2016/01/28/ReactNatvie%E7%AC%94%E8%AE%B0-Flex%E5%B8%83%E5%B1%80/</url>
+      <content type="html"><![CDATA[<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>ReactNative基于FlexBox实现页面布局，FlexBox布局是CSS3中一种的新的布局模块，其主要思想是Flex元素能够自动放大缩小来填充剩余可用空间。与传统的布局不同，Flex布局中方向并不是固定的，横着竖着或者反向横竖都可用轻松实现。学习Flex布局需要了解其基本的布局概念，熟悉容器属性及元素属性，在此基础上尝试实现常见布局形式。<br><strong> <code>特别注意：
+1以下的属性名为FlexBox为CSS3中的属性名，在React-Native中使用时，需要转化为驼峰式的命名方式。如flex-direction需要写为flexDirection的形式。
+2align-Content在ReactNatvie中不存在</code> </strong><br>本文内容和图片均来自参考资料中的文章，仅做整理。</p>
+<h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><p><img src="http://7xored.com1.z0.glb.clouddn.com/blog_react_flex_basic.png" alt="basic"><br><strong>Flex容器（Flex Container）</strong>：采用Flex布局的容器<br><strong>Flex元素（Flex Item)</strong>：采用Flex布局的子元素<br><strong>主轴 (Main Axis)</strong>：Flex元素排列的方向。其方向由<code>flex-direction</code>决定<br><strong>交叉轴（Cross Axis）</strong>：与主轴垂直方向<br><strong>主轴起点（Main Start）| 主轴终点（Main End)</strong>：主轴方向由主轴起点开始，往主轴终点结束<br><strong>交叉轴起点（Cross Start）| 交叉轴终点（Cross End）</strong>：交叉轴方向由交叉轴起点开始，往交叉轴终点结束</p>
+<h1 id="Flex属性"><a href="#Flex属性" class="headerlink" title="Flex属性"></a>Flex属性</h1><p>Flex属性分为容器属性和元素属性两类。分别作用于Flex容器和Flex元素上。</p>
+<h2 id="容器属性"><a href="#容器属性" class="headerlink" title="容器属性"></a>容器属性</h2><p>容器属性决定容器内部元素的排列方式和方向，目前容器属性共6种，分别是：</p>
+<h3 id="flex-direction"><a href="#flex-direction" class="headerlink" title="flex-direction"></a>flex-direction</h3><p>flex-direction属性是项目排列的方向，即主轴方向。<br>flex-direction可选值为 <code>row（默认值） | row-reverse | column | column-reverse</code><br><img src="http://7xored.com1.z0.glb.clouddn.com/blog_react_flex_flex-direction.svg" alt="flex-direction"></p>
+<ul>
+<li>row:水平方向从左到右</li>
+<li>row-reverse:与row相反，水平方向从右到左</li>
+<li>column:竖直方向从上往下</li>
+<li>column-reverse:竖直方向从下往上</li>
+</ul>
+<h3 id="flex-wrap"><a href="#flex-wrap" class="headerlink" title="flex-wrap"></a>flex-wrap</h3><p>flex-wrap属性定义了当一条轴线排列不下元素时，换行的方式。默认情况下元素排列在一行（nowrap），通过定义flex-wrap可以进行换行<br>flex-wrap可选值为 <code>nowrap（默认值） | wrap | wrap-reverse</code><br><img src="http://7xored.com1.z0.glb.clouddn.com/blog_react_flex_flex-wrap.svg" alt="flex-wrap"></p>
+<ul>
+<li>nowrap:不换行</li>
+<li>wrap:换行，第一行在上方</li>
+<li>wrap-reverse:换行，第一行在下方</li>
+</ul>
+<h3 id="flex-flow"><a href="#flex-flow" class="headerlink" title="flex-flow"></a>flex-flow</h3><p>flex-flow是一种简写形式，其形式为flex-direction || flex-wrap，第一个值是flex-direction，第二个值是flex-wrap,默认值为row nowrap</p>
+<h3 id="justify-content"><a href="#justify-content" class="headerlink" title="justify-content"></a>justify-content</h3><p>justify-content是元素沿主轴方向的对齐方式<br>justify-content可选值为<code>flex-start(默认值) | flex-end | center | space-between | space-around</code><br><img src="http://7xored.com1.z0.glb.clouddn.com/blog_react_flex_justify-content.svg" alt="justify-content"></p>
+<ul>
+<li>flex-start:主轴起点方向对齐</li>
+<li>flex-end:主轴终点方向对齐</li>
+<li>center:居中对齐</li>
+<li>space-between:元素平均分布在主轴上，元素 <strong>之间</strong> 的间隔相等</li>
+<li>space-around:元素平均分布在主轴上，元素 <strong>两侧</strong> 的间隔相等，因此元素之间的距离是元素与边框距离的两倍(注意与space-between的区别)</li>
+</ul>
+<h3 id="align-items"><a href="#align-items" class="headerlink" title="align-items"></a>align-items</h3><p>align-items是元素在交叉轴上的对齐方式（相当于在交叉轴是上的justify-content）<br>align-items可选值为 <code>flex-start | flex-end | center | baseline | stretch(默认值)</code><br><img src="http://7xored.com1.z0.glb.clouddn.com/blog_react_flex_align-items.svg" alt="align-items"></p>
+<ul>
+<li>flex-start:交叉轴起点方向对齐</li>
+<li>flex-end:交叉轴终点方向对齐</li>
+<li>center:居中对齐</li>
+<li>baseline:按照基准线对齐(<a href="https://www.w3.org/TR/css-flexbox/#flex-baselines" target="_blank" rel="external">基准线的计算</a>)</li>
+<li>stretch:元素占满交叉轴（但是仍然受到min-width和max-width的限制）</li>
+</ul>
+<h3 id="align-content（ReactNative中不存在此属性）"><a href="#align-content（ReactNative中不存在此属性）" class="headerlink" title="align-content（ReactNative中不存在此属性）"></a>align-content（ReactNative中不存在此属性）</h3><p>align-content定义了在交叉轴上有多行元素的情况，类似于justify-content中有多行元素时候的对齐方式<br>align-content可选值为 <code>flex-start | flex-end | center | space-between | space-around | stretch(默认值)</code><br><img src="http://7xored.com1.z0.glb.clouddn.com/blog_react_flex_align-content.svg" alt="align-content"></p>
+<ul>
+<li>flex-start:交叉轴起点方向对齐</li>
+<li>flex-end:交叉轴终点方向对齐</li>
+<li>center:居中对齐</li>
+<li>space-between:元素 <strong>之间</strong> 间隔相当</li>
+<li>space-around:元素 <strong>两侧</strong> 间隔相当</li>
+<li>stretch:占满交叉轴</li>
+</ul>
+<h2 id="元素属性"><a href="#元素属性" class="headerlink" title="元素属性"></a>元素属性</h2><p>目前flex元素属性共有6中，分别是：</p>
+<h3 id="order"><a href="#order" class="headerlink" title="order"></a>order</h3><p>order定义了元素在flex容器中出现的顺序，order数值越小，元素出现的越靠前。默认值为0<br>order是一个 <strong>可为负</strong> 的整数<br><img src="http://7xored.com1.z0.glb.clouddn.com/blog_react_flex_order.svg" alt="order"></p>
+<h3 id="flex-grow"><a href="#flex-grow" class="headerlink" title="flex-grow"></a>flex-grow</h3><p>flex-grow属性定义了当容器有剩余空间时，内部元素的放大比例，默认为0，即如果存在剩余空间，也不放大<br>如果所有元素flex-grow都设置为同一个数字，则他们会平分剩余的空间。<br>flex-grow是一个 <strong>非负</strong> 整数<br><img src="http://7xored.com1.z0.glb.clouddn.com/blog_react_flex_flex-grow.svg" alt="order"></p>
+<h3 id="flex-shrink"><a href="#flex-shrink" class="headerlink" title="flex-shrink"></a>flex-shrink</h3><p>与flex-grow相对的，flex-shrink定义了当容器空间不足时，元素的缩小比例，默认值为0，即空间不足时也不缩小<br>flex-shrink是一个 <strong>非负</strong> 整数</p>
+<h3 id="flex-basis"><a href="#flex-basis" class="headerlink" title="flex-basis"></a>flex-basis</h3><p>flex-basis属性定义了在分配多余空间之前，元素占据的主轴空间（main size），默认值为auto，即元素的本来大小。<br>flex-basic可以是一个数值（20%，5em等）或者关键词（auto等）</p>
+<h3 id="flex"><a href="#flex" class="headerlink" title="flex"></a>flex</h3><p>flex是 flex-grow, flex-shrink, flex-basic的简写（推荐使用这种方式），其中flex-shrink和felx-basic是可以省略的，默认值为0 1 auto</p>
+<h3 id="align-self"><a href="#align-self" class="headerlink" title="align-self"></a>align-self</h3><p>align-self可以覆盖默认的对齐方式或者通过align-items指定的对齐方式，默认值为auto，即继承父元素的align-items属性<br>可选值为auto加上align-items的5个可选值<br><img src="http://7xored.com1.z0.glb.clouddn.com/blog_react_flex_align-items.svg" alt="order"></p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
+<li><a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/" target="_blank" rel="external">A Complete Guide to Flexbox</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2015/07/flex-grammar.html" target="_blank" rel="external">Flex 布局教程：语法篇</a></li>
+<li><a href="https://scotch.io/tutorials/a-visual-guide-to-css3-flexbox-properties" target="_blank" rel="external">A Visual Guide to CSS3 Flexbox Properties</a></li>
+</ul>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[使用StrictMode和MAT分析Android内存泄露]]></title>
+      <url>http://www.chenshixin.com/2015/12/06/%E4%BD%BF%E7%94%A8StrictMode%E5%92%8CMAT%E5%88%86%E6%9E%90Android%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2%E9%97%AE%E9%A2%98/</url>
+      <content type="html"><![CDATA[<h1 id="涉及工具"><a href="#涉及工具" class="headerlink" title="涉及工具"></a>涉及工具</h1><ul>
+<li><a href="http://www.eclipse.org/mat/downloads.php" target="_blank" rel="external">Memory Analyzer (MAT)</a>: Eclipse的内存分析工具，可选择独立版本(Stand-alone)或Eclipse插件(Update-site)。</li>
+<li><a href="http://tools.android.com/download/studio" target="_blank" rel="external">Android Studio</a>: Android开发的IDE，自带内存监视工具。</li>
+<li><a href="https://github.com/square/leakcanary" target="_blank" rel="external">leakcanary</a>: Square的内存泄露检测库。</li>
+</ul>
+<h1 id="文章由来"><a href="#文章由来" class="headerlink" title="文章由来"></a>文章由来</h1><p>上周开发组内的同事介绍了Android自带的StrictMode，在使用过程发现有多处Activity泄露告警。通过结合Android Studio自带的内存监视工具和MAT，追踪到多处问题代码，并进行了修正，在此进行记录。</p>
+<h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><h2 id="垃圾对象"><a href="#垃圾对象" class="headerlink" title="垃圾对象"></a>垃圾对象</h2><p>Android虚拟机GC采用的<code>根搜索算法</code>,GC从GC Roots出发，对heap进行遍历。最终没有直接或者间接引用GC Roots的对象就是需要回收的垃圾。</p>
+<h2 id="内存泄露"><a href="#内存泄露" class="headerlink" title="内存泄露"></a>内存泄露</h2><p>某些失去使用价值的对象仍然保持着对跟GC Roots的直接或间接应用，即可以视为发生了内存泄露的情况。<br>Android应用可使用内存较少，发生内存泄露的情况使得内存的使用更加紧张，甚至可能发生OOM。</p>
+<h1 id="常见原因"><a href="#常见原因" class="headerlink" title="常见原因"></a>常见原因</h1><ul>
+<li>类的静态变量持有大数据对象<br>静态变量长期维持到大数据对象的引用，阻止垃圾回收。</li>
+<li>非静态内部类的静态实例<br>非静态内部类会维持一个到外部类实例的引用，如果非静态内部类的实例是静态的，就会间接长期维持着外部类的引用，阻止被回收掉。</li>
+<li>资源对象未关闭<br>资源性对象如Cursor、File、Socket，应该在使用后及时关闭。未在finally中关闭，会导致异常情况下资源对象未被释放的隐患。</li>
+<li>注册对象未反注册<br>未反注册会导致观察者列表里维持着对象的引用，阻止垃圾回收。</li>
+<li>Handler临时性内存泄露<ul>
+<li>Handler通过发送Message与主线程交互，Message发出之后是存储在MessageQueue中的，有些Message也不是马上就被处理的。在Message中存在一个 target，是Handler的一个引用，如果Message在Queue中存在的时间越长，就会导致Handler无法被回收。如果Handler是非静态的，则会导致Activity或者Service不会被回收。</li>
+<li>由于AsyncTask内部也是Handler机制，同样存在内存泄漏的风险。 此种内存泄露，一般是临时性的。</li>
+</ul>
+</li>
+</ul>
+<h1 id="检测方式"><a href="#检测方式" class="headerlink" title="检测方式"></a>检测方式</h1><h2 id="静态检测"><a href="#静态检测" class="headerlink" title="静态检测"></a>静态检测</h2><h3 id="Android-Lint"><a href="#Android-Lint" class="headerlink" title="Android Lint"></a>Android Lint</h3><p>在开发过程中，Android Studio通常会提示我们可能会引起泄露的问题,比如图中所示的Handler。<br><img src="http://7xored.com1.z0.glb.clouddn.com/blogandroid_leak_images_handler.png" alt="Handler泄露提示" style="width: 400px;"></p>
+<h3 id="Insteption"><a href="#Insteption" class="headerlink" title="Insteption"></a>Insteption</h3><p>也可通过Android Studio中的分析工具对整个项目进行静态分析。Analyze - Run Insteption by Name - 输入Memory Issues， 选择需要进行分析的项目进行分析即可。<br><img src="http://7xored.com1.z0.glb.clouddn.com/blogandroid_leak_images_insteption.png" alt="使用AndroidStuido的分析工具" style="width: 400px;"><br><img src="http://7xored.com1.z0.glb.clouddn.com/blogandroid_leak_images_memory_issues.png" alt="输入Memory Inssues,，选择需要进行分析的项目" style="width: 400px;"></p>
+<h2 id="StrictMode"><a href="#StrictMode" class="headerlink" title="StrictMode"></a>StrictMode</h2><p>StrictMode除了通常使用的检测UI线程中的阻塞性操作外，还能检测内存方面的问题，在发生内存泄露时输出Error的LogCat日志。可以在Application或Activity中进行如下的设置。<br><strong><code>注意请不要在线上版本使用，建议设置开关</code></strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (BuildConfig.DEBUG) &#123;</div><div class="line">        StrictMode.setVmPolicy(<span class="keyword">new</span> StrictMode.VmPolicy.Builder()</div><div class="line">                .detectActivityLeaks()              <span class="comment">//检测Activity泄露</span></div><div class="line">                .detectLeakedSqlLiteObjects()       <span class="comment">//检测数据库对象泄露</span></div><div class="line">                .detectLeakedClosableObjects()      <span class="comment">//检测Closable对象泄露</span></div><div class="line">                .detectLeakedRegistrationObjects()  <span class="comment">//检测注册对象的泄露，需要API16及以上</span></div><div class="line">                .penaltyLog()						<span class="comment">//在LogCat中打印</span></div><div class="line">                .build());</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="LeakCanary"><a href="#LeakCanary" class="headerlink" title="LeakCanary"></a>LeakCanary</h3><p><a href="https://github.com/square/leakcanary" target="_blank" rel="external">LeakCanary</a>是Square推出的开源内存泄露检测库，可以检测Fragment、Activity等，并支持上传追踪文件到服务器。<br>最基本的使用方式如下。<br>1.在 build.gradle 中加入引用，不同的编译使用不同的引用：<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">dependencies</span> &#123;</div><div class="line">  debugCompile <span class="string">'com.squareup.leakcanary:leakcanary-android:1.3'</span></div><div class="line">  releaseCompile <span class="string">'com.squareup.leakcanary:leakcanary-android-no-op:1.3'</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>2.在 Application 中：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExampleApplication</span> <span class="keyword">extends</span> <span class="title">Application</span> </span>&#123;</div><div class="line"></div><div class="line">  <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">super</span>.onCreate();</div><div class="line">    LeakCanary.install(<span class="keyword">this</span>);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这样，如果检测到某个 activity 有内存泄露，LeakCanary 会自动地显示一个通知。</p>
+<h1 id="使用MAT进行分析"><a href="#使用MAT进行分析" class="headerlink" title="使用MAT进行分析"></a>使用MAT进行分析</h1><p>这里我们模拟一个使用Handler时常见的可能出现内存泄露的情况。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> TextView mCountTV;</div><div class="line">    </div><div class="line"><span class="keyword">private</span> Handler mHandler = <span class="keyword">new</span> Handler(<span class="keyword">new</span> Handler.Callback() &#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">handleMessage</span><span class="params">(Message msg)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">    setContentView(R.layout.activity_main);</div><div class="line">    mCountTV = (TextView) findViewById(R.id.tv_main_stop_times);</div><div class="line">    mHandler.postDelayed(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">            mCountTV.setText(<span class="string">"11111"</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;, <span class="number">10000</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>当StrictMode或LeakCanary提示我们发生内存泄露问题时，我们可以通过Android Studio自带的内存监视工具转存Java堆文件。<br><img src="http://7xored.com1.z0.glb.clouddn.com/blogandroid_leak_images_memory_monitor.png" alt="Android Studio 内存监视工具" style="width: 600px;"><br>转存成功后可以在Captures中看到堆镜像文件。<br><img src="http://7xored.com1.z0.glb.clouddn.com/blogandroid_leak_images_memory_captures.png" alt="堆文件" style="width: 600px;"><br>由于Android Studio目前提供的内存分析功能有限，这里我们使用MAT工具进行分析。这里我们需要将文件导出为标准的hprof格式才能被MAT成功分析。<br><img src="http://7xored.com1.z0.glb.clouddn.com/blogandroid_leak_images_memory_export.png" alt="导出hprof" style="width: 400px;"><br>使用MAT打开导出的内存文件，点击下方的Histogram视图(立方图)，搜索告警中提及到的Activity。这里可以搜索ClassName为包含Activity，Objects个数大于1的，可以直观的罗列存在多个实例的Activity。<br><img src="http://7xored.com1.z0.glb.clouddn.com/blogandroid_leak_images_mat.png" alt="导入hprof文件到MAT" style="width: 400px;"><br><img src="http://7xored.com1.z0.glb.clouddn.com/blogandroid_leak_images_search.png" alt="找出存在多个实例的Activity类" style="width: 400px;"><br>找到疑似存在问题的Activity，我们需要知道是由于什么原因导致其之前的实例没有销毁，这里可以通过 右键类名-Merge Shortest Paths to GC Roots-exclude weak references 找到对GC根的引用。<br><img src="http://7xored.com1.z0.glb.clouddn.com/blogandroid_leak_images_find_path.png" alt="找出对GC根的引用链" style="width: 400px;"><br>通过展开可以分析出最终实例未销毁的原因是Activity被callback所引用，它又被Message中一系列的next所引用，最后到主线程才结束。<br><img src="http://7xored.com1.z0.glb.clouddn.com/blogandroid_leak_images_path.png" alt="查看引用链" style="width: 400px;"></p>
+<p>通过以上方法，可以分析出对象（特别是Activity）未销毁的原因，较为常见的是2中所列原因。为修正此类问题，可以通过避免非静态内部类或者使用弱引用等方式进行改造。</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
+<li><a href="http://www.jianshu.com/p/c49f778e7acf" target="_blank" rel="external">使用Android studio分析内存泄露</a></li>
+<li><a href="http://jiajixin.cn/2015/01/06/memory_leak/" target="_blank" rel="external">Android内存泄漏研究</a></li>
+<li><a href="http://droidyue.com/blog/2015/04/12/avoid-memory-leaks-on-context-in-android/" target="_blank" rel="external">避免Android中Context引起的内存泄露</a></li>
+</ul>
+]]></content>
+    </entry>
+    
+  
+  
+</search>
